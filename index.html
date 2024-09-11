@@ -8,6 +8,9 @@
          #capture, #canvas, #photo {
             display: none;
         }
+        #video, #canvas, #photo {
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -17,10 +20,11 @@
         <button id="init-front" onClick="initFront()">Iniciar Camera Frontal</button>
         <button id="init-back" onClick="initBack()">Iniciar Camera Traseira</button>
     </div>
-    <video id="video" width="320" height="240" autoplay playsinline></video>
+    <video id="video" autoplay playsinline></video>
     <button id="capture">Capturar Foto</button>
-    <canvas id="canvas" width="320" height="240"></canvas>
-    <img id="photo" alt="Sua Foto" width="320" height="240"/>
+    <canvas id="canvas"></canvas>
+    <br>
+    <img id="photo" alt="Sua Foto"/>
 
     <script>
         const video = document.getElementById('video');
@@ -31,13 +35,21 @@
 
         function initBack() {
             init({
-                video: { facingMode: { exact: 'environment' } }
+                video: {
+                facingMode: { exact: 'environment' },
+                width: { ideal: 1920 },
+                height: { ideal: 1080 }
+            }
             })
         }
 
         function initFront() {
             init({
-                video: { facingMode: { exact: 'user' } }
+                video: {
+                facingMode: { exact: 'user' },
+                width: { ideal: 1920 },
+                height: { ideal: 1080 }
+            }
             })
         }
 
@@ -47,6 +59,11 @@
                     .then(function(stream) {
                         video.srcObject = stream;
                         video.play();
+
+                        video.addEventListener('loadedmetadata', () => {
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                        });
 
                         captureButton.style.display = 'block';
                         photo.style.display = 'block';
@@ -62,7 +79,7 @@
 
         captureButton.addEventListener('click', () => {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const dataURL = canvas.toDataURL('image/png');
+            const dataURL = canvas.toDataURL('image/png', 1.0);
             photo.setAttribute('src', dataURL);
         });
     </script>
