@@ -8,10 +8,10 @@
 <body>
 
     <h1>Tirar foto com a câmera</h1>
-    <video id="video" width="320" height="240" autoplay></video>
+    <video id="video" width="320" height="240" autoplay playsinline></video>
     <button id="capture">Tirar Foto</button>
     <canvas id="canvas" width="320" height="240"></canvas>
-    <img id="photo" alt="Sua Foto" />
+    <img id="photo" alt="Sua Foto" width="320" height="240"/>
 
     <script>
         const video = document.getElementById('video');
@@ -20,13 +20,18 @@
         const captureButton = document.getElementById('capture');
         const context = canvas.getContext('2d');
 
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then((stream) => {
-                video.srcObject = stream;
-            })
-            .catch((err) => {
-                console.error("Erro ao acessar a câmera: ", err);
-            });
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function(err) {
+                    console.error("Erro ao acessar a câmera: ", err);
+                });
+        } else {
+            alert("Seu navegador não suporta acesso à câmera.");
+        }
 
         captureButton.addEventListener('click', () => {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
