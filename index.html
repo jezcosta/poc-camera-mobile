@@ -4,12 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POC Camera</title>
+    <style>
+         #capture, #canvas, #photo {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
     <h1>Tirar foto com a câmera</h1>
+    <div>
+        <button id="init-front" onClick="initFront()">Iniciar Camera Frontal</button>
+        <button id="init-back" onClick="initBack()">Iniciar Camera Traseira</button>
+    </div>
     <video id="video" width="320" height="240" autoplay playsinline></video>
-    <button id="capture">Tirar Foto</button>
+    <button id="capture">Capturar Foto</button>
     <canvas id="canvas" width="320" height="240"></canvas>
     <img id="photo" alt="Sua Foto" width="320" height="240"/>
 
@@ -20,17 +29,35 @@
         const captureButton = document.getElementById('capture');
         const context = canvas.getContext('2d');
 
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function(stream) {
-                    video.srcObject = stream;
-                    video.play();
-                })
-                .catch(function(err) {
-                    console.error("Erro ao acessar a câmera: ", err);
-                });
-        } else {
-            alert("Seu navegador não suporta acesso à câmera.");
+        function initBack() {
+            init({
+                video: { facingMode: { exact: 'environment' } }
+            })
+        }
+
+        function initFront() {
+            init({
+                video: { facingMode: { exact: 'user' } }
+            })
+        }
+
+        function init (options) {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true, ...options })
+                    .then(function(stream) {
+                        video.srcObject = stream;
+                        video.play();
+
+                        captureButton.style.display = 'block';
+                        photo.style.display = 'block';
+                        canvas.style.display = 'block';
+                    })
+                    .catch(function(err) {
+                        console.error("Error: ", err);
+                    });
+            } else {
+                alert("Seu navegador não suporta acesso à câmera.");
+            }
         }
 
         captureButton.addEventListener('click', () => {
