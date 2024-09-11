@@ -36,26 +36,26 @@
         function initBack() {
             init({
                 video: {
-                facingMode: { exact: 'environment' },
-                width: { ideal: 1920 },
-                height: { ideal: 1080 }
-            }
-            })
+                    facingMode: { exact: 'environment' },
+                    width: { ideal: 4096 },  // Ajuste para tentar a resolução máxima
+                    height: { ideal: 2160 }  // Alta resolução, caso disponível
+                }
+            });
         }
 
         function initFront() {
             init({
                 video: {
-                facingMode: { exact: 'user' },
-                width: { ideal: 1920 },
-                height: { ideal: 1080 }
-            }
-            })
+                    facingMode: { exact: 'user' },
+                    width: { ideal: 4096 },
+                    height: { ideal: 2160 }
+                }
+            });
         }
 
-        function init (options) {
+        function init(options) {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: true, ...options })
+                navigator.mediaDevices.getUserMedia(options)
                     .then(function(stream) {
                         video.srcObject = stream;
                         video.play();
@@ -79,7 +79,7 @@
 
         captureButton.addEventListener('click', () => {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const dataURL = canvas.toDataURL('image/png', 1.0);
+            const dataURL = canvas.toDataURL('image/jpeg', 1.0);
             photo.setAttribute('src', dataURL);
         });
     </script>
