@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner Quagga-128</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        #scanner-container {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            margin: 0 auto;
+            border: 2px solid #333;
+            position: relative;
+        }
+        
+        #barcode-result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        
+        #barcode {
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Scan Barcode - Quagga-128</h1>
+    <div id="scanner-container"></div>
+    <div id="barcode-result">
+        <p>Barcode Result: <span id="barcode"></span></p>
+        <p>v0.0.1</p>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector('#scanner-container'),
+                constraints: {
+                    facingMode: "environment" 
+                },
+            },
+            decoder: {
+                readers: ["code_128_reader"]
+            },
+        }, function(err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            console.log("Initialization finished. Ready to start");
+            Quagga.start();
+        });
+
+        Quagga.onDetected(function(result) {
+            var code = result.codeResult.code;
+            document.getElementById('barcode').textContent = code;
+            Quagga.stop(); // Para a leitura após encontrar um código
+        });
+    });
+    </script>
+</body>
+</html>
